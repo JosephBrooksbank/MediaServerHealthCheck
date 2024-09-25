@@ -1,0 +1,14 @@
+[Unit]
+Description=Health Check Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/pi/MediaServerHealthCheck/src/main.py
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+
+
