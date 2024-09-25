@@ -56,3 +56,7 @@ def start_threaded():
     thread = threading.Thread(target=client.run, args=(config['DISCORD_TOKEN'],))
     thread.daemon = True
     thread.start()
+
+
+def start():
+    client.run(config['DISCORD_TOKEN'])
