@@ -19,7 +19,17 @@ def connect_mqtt():
         print(f"Connected with result code {reason_code}")
         client.subscribe(topic)
 
+    def on_disconnect(client, userdata, disconnect_flags, rc, properties):
+        print(f"Disconnected with result code {rc}")
+        if rc != 0:
+            print("Unexpected disconnection.")
+            try:
+                client.reconnect()
+            except Exception as e:
+                print(f"Reconnection failed: {e}")
+
     client.on_connect = on_connect
+    client.on_disconnect = on_disconnect
     client.connect(broker, port)
     return client
 
