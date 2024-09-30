@@ -1,3 +1,4 @@
+import logging
 import threading
 import dotenv
 
@@ -15,7 +16,7 @@ config = dotenv.dotenv_values("../.env", encoding="utf-8")
 @client.event
 async def on_ready():
     check_health.start()
-    print(f'We have logged in as {client.user}')
+    logging.debug(f'We have logged in as {client.user}')
 
 
 @client.event
@@ -35,9 +36,9 @@ async def check_health():
     print("Checking health")
     with Database() as db:
         time_diff = db.get_latest_alive()
-        print(f"Time diff is {time_diff}")
+        logging.info(f"Time diff is {time_diff}")
         if time_diff > 30:
-            print("Server is down!")
+            logging.warning("Server is down!")
             if not db.get_sent_failure():
                 await send_status()
         else:
@@ -45,10 +46,13 @@ async def check_health():
 
 
 async def send_status():
+    logging.debug("Sending status")
     channel = client.get_channel(int(config['DISCORD_CHANNEL_ID']))
     if channel:
+        logging.debug("channel found, sending message")
         await channel.send("@everyone the server is down!")
         with Database() as db:
+            logging.debug("Setting sent failure to true")
             db.set_sent_failure(True)
 
 
